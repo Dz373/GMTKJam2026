@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f696efb2e85443a43aa4ce66814acae5, type: 3}
+  m_Name: GassTileData
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: f5d4b576afd72ec46baa464082290876, type: 2}
+  - {fileID: 11400000, guid: 485a79256a958a54abf2e4fa427a0d03, type: 2}
+  mv_cost: 1
+  no_pass: 0
