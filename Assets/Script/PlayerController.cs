@@ -9,13 +9,7 @@ public class PlayerController : MonoBehaviour
 
     public Vector2 pos;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    private void Update() {
-        
+    private void Start() {
+        pos = transform.position;
     }
 }
