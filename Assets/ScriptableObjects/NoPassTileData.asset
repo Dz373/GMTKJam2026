@@ -10,11 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f696efb2e85443a43aa4ce66814acae5, type: 3}
-  m_Name: WaterTileData
+  m_Name: NoPassTileData
   m_EditorClassIdentifier: 
   tiles:
   - {fileID: 11400000, guid: a3ee2eb6d2a69eb49b8db17e33ccc78f, type: 2}
   - {fileID: 11400000, guid: 1f3f37ddf6a900b4f99916edde379cf4, type: 2}
   - {fileID: 11400000, guid: c3b42c2b71b99874693a9dcc6ae0943b, type: 2}
+  - {fileID: 11400000, guid: 5e33f84b1da877645aa7ce485f86721b, type: 2}
+  - {fileID: 11400000, guid: 23a71f88300ac374088724dbaaf7e55a, type: 2}
   mv_cost: 1
   no_pass: 1
+  can_interact: 0

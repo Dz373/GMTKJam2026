@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f696efb2e85443a43aa4ce66814acae5, type: 3}
-  m_Name: GassTileData
+  m_Name: 1CostTileData
   m_EditorClassIdentifier: 
   tiles:
   - {fileID: 11400000, guid: f5d4b576afd72ec46baa464082290876, type: 2}

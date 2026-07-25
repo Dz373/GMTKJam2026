@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 
@@ -10,6 +11,7 @@ public class GameManager : MonoBehaviour
     public UIManager ui;
     public Tilemap overlay;
     public Tilemap map;
+    public Tilemap objectMap;
 
     [Header("Misc Objects")]
     [SerializeField] private Tile greenOverlay;
@@ -42,8 +44,6 @@ public class GameManager : MonoBehaviour
         queue.Enqueue(player.pos);
         tiles.Add(player.pos, player.mv_range);
 
-        int mv_cost = 1;
-
         while (queue.Count > 0) {
             Vector2 cur_tile = queue.Dequeue();
             int cur_mv = tiles[cur_tile];
@@ -51,10 +51,10 @@ public class GameManager : MonoBehaviour
             foreach (Vector2 dir in directions) {
                 Vector2 new_tile = cur_tile + dir;
 
-                if (!map.HasTile(Vec2ToVec3(new_tile)))
+                if (!IsValidTile(new_tile))
                     continue;
-                
-                mv_cost = tileData[map.GetTile(Vec2ToVec3(new_tile))].mv_cost;
+
+                int mv_cost = GetMoveCost(new_tile);
                 if (cur_mv < mv_cost)
                     continue;
 
@@ -72,6 +72,28 @@ public class GameManager : MonoBehaviour
         }
 
         return new List<Vector2>(tiles.Keys);
+    }
+
+    private bool IsValidTile(Vector2 v) {
+        Vector3Int tile = Vec2ToVec3(v);
+
+        if (!map.HasTile(tile))
+            return false;
+
+        if (objectMap.HasTile(tile))
+            if (tileData[map.GetTile(tile)].no_pass)
+                return false;
+        
+        if (tileData[map.GetTile(tile)].no_pass)
+            return false;
+
+        return true;
+    }
+
+    private int GetMoveCost(Vector2 v) {
+        Vector3Int tile = Vec2ToVec3(v);
+
+        return tileData[map.GetTile(tile)].mv_cost;
     }
 
     private Vector3Int Vec2ToVec3(Vector2 v) {

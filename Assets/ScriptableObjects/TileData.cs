@@ -8,4 +8,5 @@ public class TileData : ScriptableObject
 
     public int mv_cost;
     public bool no_pass;
+    public bool can_interact;
 }
