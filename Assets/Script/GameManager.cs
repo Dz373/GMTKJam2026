@@ -37,6 +37,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.D)) {
+            print("Tile Cost: " + GetMoveCost(cursor.pos));
+        }
+    }
+
     private List<Vector2> GetMoveTiles() {
         Queue<Vector2> queue = new Queue<Vector2>();
         Dictionary<Vector2, int> tiles = new Dictionary<Vector2, int>();
@@ -51,10 +57,10 @@ public class GameManager : MonoBehaviour
             foreach (Vector2 dir in directions) {
                 Vector2 new_tile = cur_tile + dir;
 
-                if (!IsValidTile(new_tile))
+                if (!IsValidTile(Vec2ToVec3(new_tile)))
                     continue;
 
-                int mv_cost = GetMoveCost(new_tile);
+                int mv_cost = GetMoveCost(Vec2ToVec3(new_tile));
                 if (cur_mv < mv_cost)
                     continue;
 
@@ -74,26 +80,27 @@ public class GameManager : MonoBehaviour
         return new List<Vector2>(tiles.Keys);
     }
 
-    private bool IsValidTile(Vector2 v) {
-        Vector3Int tile = Vec2ToVec3(v);
-
-        if (!map.HasTile(tile))
+    private bool IsValidTile(Vector3Int v) {
+        if (!map.HasTile(v))
             return false;
 
-        if (objectMap.HasTile(tile))
-            if (tileData[map.GetTile(tile)].no_pass)
+        if (objectMap.HasTile(v))
+            if (tileData[objectMap.GetTile(v)].no_pass)
                 return false;
         
-        if (tileData[map.GetTile(tile)].no_pass)
+        if (tileData[map.GetTile(v)].no_pass)
             return false;
 
         return true;
     }
 
-    private int GetMoveCost(Vector2 v) {
-        Vector3Int tile = Vec2ToVec3(v);
+    private int GetMoveCost(Vector3Int v) {
+        int cost = tileData[map.GetTile(v)].mv_cost;
 
-        return tileData[map.GetTile(tile)].mv_cost;
+        if (objectMap.HasTile(v))
+            cost += tileData[objectMap.GetTile(v)].mv_cost;
+
+        return cost;
     }
 
     private Vector3Int Vec2ToVec3(Vector2 v) {
