@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<TileData> tileDataList;
     private Dictionary<TileBase, TileData> tileData;
 
-    private Vector2[] directions = {Vector2.right, Vector2.up, Vector2.left, Vector2.down };
+    private Vector3Int[] directions = { Vector3Int.right, Vector3Int.up, Vector3Int.left, Vector3Int.down };
+    private List<Vector3Int> movementTiles;
 
     private void Awake() {
         tileData = new Dictionary<TileBase, TileData>();
@@ -32,35 +33,42 @@ public class GameManager : MonoBehaviour
     }
 
     private void Start() {
-        foreach (Vector2 v in GetMoveTiles()) {
-            overlay.SetTile(Vec2ToVec3(v), greenOverlay);
-        }
+        DisplayOverlay();
     }
 
     private void Update() {
         if (Input.GetKeyDown(KeyCode.D)) {
             print("Tile Cost: " + GetMoveCost(cursor.pos));
         }
+
+        if (Input.GetMouseButtonDown(0)) {
+            Vector3Int target = cursor.pos;
+
+            if (movementTiles.Contains(target)) {
+                player.Move(target);
+                DisplayOverlay();
+            }
+        }
     }
 
-    private List<Vector2> GetMoveTiles() {
-        Queue<Vector2> queue = new Queue<Vector2>();
-        Dictionary<Vector2, int> tiles = new Dictionary<Vector2, int>();
+    private List<Vector3Int> GetMoveTiles() {
+        Queue<Vector3Int> queue = new Queue<Vector3Int>();
+        Dictionary<Vector3Int, int> tiles = new Dictionary<Vector3Int, int>();
 
         queue.Enqueue(player.pos);
         tiles.Add(player.pos, player.mv_range);
 
         while (queue.Count > 0) {
-            Vector2 cur_tile = queue.Dequeue();
+            Vector3Int cur_tile = queue.Dequeue();
             int cur_mv = tiles[cur_tile];
 
-            foreach (Vector2 dir in directions) {
-                Vector2 new_tile = cur_tile + dir;
+            foreach (Vector3Int dir in directions) {
+                Vector3Int new_tile = cur_tile + dir;
 
-                if (!IsValidTile(Vec2ToVec3(new_tile)))
+                if (!IsValidTile(new_tile))
                     continue;
 
-                int mv_cost = GetMoveCost(Vec2ToVec3(new_tile));
+                int mv_cost = GetMoveCost(new_tile);
                 if (cur_mv < mv_cost)
                     continue;
 
@@ -77,7 +85,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        return new List<Vector2>(tiles.Keys);
+        return new List<Vector3Int>(tiles.Keys);
     }
 
     private bool IsValidTile(Vector3Int v) {
@@ -103,7 +111,11 @@ public class GameManager : MonoBehaviour
         return cost;
     }
 
-    private Vector3Int Vec2ToVec3(Vector2 v) {
-        return new Vector3Int((int)v.x, (int)v.y, 0);
+    private void DisplayOverlay() {
+        movementTiles = GetMoveTiles();
+        overlay.ClearAllTiles();
+        foreach (Vector3Int v in movementTiles) {
+            overlay.SetTile(v, greenOverlay);
+        }
     }
 }

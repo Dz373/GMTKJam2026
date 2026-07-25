@@ -7,9 +7,10 @@ public class PlayerController : MonoBehaviour
     public int mv_range = 3;
     public int actions = 3;
 
-    public Vector2 pos;
+    public Vector3Int pos;
 
-    private void Start() {
-        pos = transform.position;
+    public void Move(Vector3Int v) {
+        pos = v;
+        transform.position = v;
     }
 }
