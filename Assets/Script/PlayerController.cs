@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,8 +9,10 @@ public class PlayerController : MonoBehaviour
 
     public Vector3Int pos;
 
-    public void Move(Vector3Int v) {
-        pos = v;
-        transform.position = v;
+    [SerializeField] private PathFollower pathFollow;
+
+    public void Move(List<Vector3Int> path, Vector3Int target) {
+        pathFollow.SetNewPath(path);
+        pos = target;
     }
 }

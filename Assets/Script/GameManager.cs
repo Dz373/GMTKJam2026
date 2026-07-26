@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
 
     private Vector3Int[] directions = { Vector3Int.right, Vector3Int.up, Vector3Int.left, Vector3Int.down };
     private List<Vector3Int> movementTiles;
+    private Dictionary<Vector3Int, int> tileCost;
 
     private void Awake() {
         tileData = new Dictionary<TileBase, TileData>();
@@ -45,7 +46,7 @@ public class GameManager : MonoBehaviour
             Vector3Int target = cursor.pos;
 
             if (movementTiles.Contains(target)) {
-                player.Move(target);
+                player.Move(FindMovePath(target), target);
                 DisplayOverlay();
             }
         }
@@ -53,14 +54,14 @@ public class GameManager : MonoBehaviour
 
     private List<Vector3Int> GetMoveTiles() {
         Queue<Vector3Int> queue = new Queue<Vector3Int>();
-        Dictionary<Vector3Int, int> tiles = new Dictionary<Vector3Int, int>();
+        tileCost = new Dictionary<Vector3Int, int>();
 
         queue.Enqueue(player.pos);
-        tiles.Add(player.pos, player.mv_range);
+        tileCost.Add(player.pos, player.mv_range);
 
         while (queue.Count > 0) {
             Vector3Int cur_tile = queue.Dequeue();
-            int cur_mv = tiles[cur_tile];
+            int cur_mv = tileCost[cur_tile];
 
             foreach (Vector3Int dir in directions) {
                 Vector3Int new_tile = cur_tile + dir;
@@ -72,20 +73,20 @@ public class GameManager : MonoBehaviour
                 if (cur_mv < mv_cost)
                     continue;
 
-                if (tiles.ContainsKey(new_tile)) {
-                    if (cur_mv - mv_cost > tiles[new_tile]) {
-                        tiles[new_tile] = cur_mv - mv_cost;
+                if (tileCost.ContainsKey(new_tile)) {
+                    if (cur_mv - mv_cost > tileCost[new_tile]) {
+                        tileCost[new_tile] = cur_mv - mv_cost;
                         queue.Enqueue(new_tile);
                     }
                 }
                 else {
                     queue.Enqueue(new_tile);
-                    tiles.Add(new_tile, cur_mv - mv_cost);
+                    tileCost.Add(new_tile, cur_mv - mv_cost);
                 }
             }
         }
 
-        return new List<Vector3Int>(tiles.Keys);
+        return new List<Vector3Int>(tileCost.Keys);
     }
 
     private bool IsValidTile(Vector3Int v) {
@@ -117,5 +118,32 @@ public class GameManager : MonoBehaviour
         foreach (Vector3Int v in movementTiles) {
             overlay.SetTile(v, greenOverlay);
         }
+    }
+
+    private List<Vector3Int> FindMovePath(Vector3Int target) {
+        List<Vector3Int> path = new List<Vector3Int>();
+
+        Vector3Int cur = target;
+        path.Add(cur);
+
+        while (!cur.Equals(player.pos)) {
+            int cost = tileCost[cur];
+            Vector3Int next_tile = cur;
+            
+            foreach (Vector3Int dir in directions) {
+                if (!tileCost.ContainsKey(dir + cur))
+                    continue;
+                
+                if (tileCost[dir+cur] > cost) {
+                    next_tile = dir + cur;
+                    cost = tileCost[dir + cur];
+                }
+            }
+
+            cur = next_tile;
+            path.Add(cur);
+        }
+
+        return path;
     }
 }
