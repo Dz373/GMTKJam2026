@@ -6,11 +6,13 @@ public class PathFollower : MonoBehaviour
     [SerializeField] private float speed = 5f;
 
     private List<Vector3Int> path;
-    private int index = -1;
+    private int index = 0;
+    private bool finish_path = true;
 
     void Update() {
-        if (path == null || path.Count == 0 || index < 0)
+        if (path == null || path.Count == 0 || finish_path)
             return;
+
 
         Vector2 target = new Vector2(path[index].x, path[index].y);
 
@@ -19,11 +21,17 @@ public class PathFollower : MonoBehaviour
 
         if (Vector2.Distance(transform.position, target) < 0.01f)
             index--;
-        
+
+        if (index < 0) {
+            finish_path = true;
+
+            FindFirstObjectByType<GameManager>().DisplayOverlay();
+        }
     }
 
     public void SetNewPath(List<Vector3Int> newPath) {
         path = newPath;
         index = newPath.Count-1;
+        finish_path = false;
     }
 }

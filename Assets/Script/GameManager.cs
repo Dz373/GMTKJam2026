@@ -46,8 +46,9 @@ public class GameManager : MonoBehaviour
             Vector3Int target = cursor.pos;
 
             if (movementTiles.Contains(target)) {
+                overlay.ClearAllTiles();
                 player.Move(FindMovePath(target), target);
-                DisplayOverlay();
+                
             }
         }
     }
@@ -112,9 +113,9 @@ public class GameManager : MonoBehaviour
         return cost;
     }
 
-    private void DisplayOverlay() {
+    public void DisplayOverlay() {
         movementTiles = GetMoveTiles();
-        overlay.ClearAllTiles();
+        
         foreach (Vector3Int v in movementTiles) {
             overlay.SetTile(v, greenOverlay);
         }
